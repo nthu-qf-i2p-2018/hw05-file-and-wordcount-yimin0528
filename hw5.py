@@ -1,26 +1,29 @@
 
 # coding: utf-8
 
-# In[13]:
+# In[1]:
 
 
 import string
 def main(filename) :
-    txtfile = open(filename)
-    text = txtfile.read()
+    text = open(filename).read()
     from collections import Counter
     unprocess_file=list(text.replace("\n", " ").split(" "))
     list_file = []
-    translator = str.maketrans('', '', string.punctuation)
+    punc = string.punctuation.replace("-", "")
+    translator = str.maketrans('', '', punc)
     for word in unprocess_file:
-        word = word.translate(translator)
+        if (word == "" or word == "--"):continue
+        if (word[-1] in string.punctuation) or (word[0] in string.punctuation):
+            word = word.translate(translator)
         if word != "" :
             list_file.append(word)
-    counter = Counter(list_file)
+    counter = Counter()
+    counter.update(list_file)
     counter.most_common()
     import csv
     with open('wordcount.csv', 'w', newline='') as fin:
-        writer = csv.writer(fin, delimiter=',')
+        writer = csv.writer(fin, delimiter=',', lineterminator='\n')
         writer.writerow(['word','count'])
         for idx, val in counter.most_common():
             writer.writerow([idx, val])
